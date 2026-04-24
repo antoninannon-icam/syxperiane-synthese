@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthèse Syxperiane — Antonin Annon</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --syx-magenta:#D4177A;
+    --syx-teal:#009B88;
+    --syx-navy:#1A2B4A;
+    --syx-dark:#1C2E45;
+    --syx-gold:#E09510;
+    --syx-light:#F7F9FC;
+    --syx-muted:#6B7A8D;
+    --syx-card:#FFFFFF;
+    --syx-border:#E2E8F0;
+    --syx-bg:#F7F9FC;
+    --syx-text:#1A2B4A;
+    --syx-text-soft:#5A6A7A;
+    --radius:16px;
+    --radius-sm:10px;
+  }
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--syx-bg);
+    color:var(--syx-text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(247,249,252,0.94);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(26,43,74,0.08);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 2rem;height:60px;
+  }
+  .nav-logo{display:flex;align-items:center;gap:10px;}
+  .nav-logo .dot{width:10px;height:10px;border-radius:50%;background:var(--syx-magenta);}
+  .nav-logo span{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:.04em;color:var(--syx-navy);}
+  .nav-tabs{display:flex;gap:4px;}
+  .nav-tab{
+    background:transparent;border:none;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;
+    color:rgba(26,43,74,0.45);
+    padding:6px 14px;border-radius:20px;
+    transition:all .25s;
+  }
+  .nav-tab:hover{color:var(--syx-navy);background:rgba(26,43,74,0.06);}
+  .nav-tab.active{color:var(--syx-magenta);background:rgba(212,23,122,0.1);}
+  .nav-author{font-size:12px;color:rgba(26,43,74,0.35);font-style:italic;}
+
+  section{
+    min-height:100vh;
+    padding:100px 2rem 60px;
+    display:none;
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity .45s ease, transform .45s ease;
+  }
+  section.visible{display:flex;flex-direction:column;align-items:center;}
+  section.shown{opacity:1;transform:translateY(0);}
+  .section-inner{max-width:820px;width:100%;}
+
+  #s-hero{
+    justify-content:center;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,23,122,0.07) 0%, transparent 70%),
+               radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,155,136,0.06) 0%, transparent 60%),
+               var(--syx-bg);
+  }
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(212,23,122,0.08);border:1px solid rgba(212,23,122,0.25);
+    border-radius:20px;padding:5px 14px;
+    font-size:12px;color:var(--syx-magenta);letter-spacing:.08em;text-transform:uppercase;
+    margin-bottom:2rem;
+  }
+  .hero-title{
+    font-family:'Syne',sans-serif;font-weight:650;
+    font-size:clamp(2.2rem,5vw,4rem);line-height:1.1;
+    margin-bottom:1rem;
+    color:var(--syx-navy);
+  }
+  .hero-title span{color:var(--syx-magenta);}
+  .hero-sub{
+    font-size:1.1rem;color:var(--syx-text-soft);line-height:1.7;
+    max-width:560px;margin-bottom:2.5rem;
+  }
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--syx-magenta);color:#fff;
+    border:none;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+    padding:13px 28px;border-radius:30px;
+    transition:all .2s;
+  }
+  .hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,23,122,0.25);}
+  .hero-cta .arr{transition:transform .2s;}
+  .hero-cta:hover .arr{transform:translateX(4px);}
+
+  /* Stats supprimées de l'accueil — style conservé pour usage éventuel ailleurs */
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:3rem;}
+  .stat-card{
+    background:#fff;border:1px solid var(--syx-border);
+    border-radius:var(--radius-sm);padding:20px;text-align:center;
+    transition:all .25s;box-shadow:0 2px 8px rgba(26,43,74,0.06);
+  }
+  .stat-card:hover{border-color:rgba(212,23,122,0.3);box-shadow:0 4px 16px rgba(212,23,122,0.1);}
+  .stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--syx-magenta);}
+  .stat-l{font-size:12px;color:var(--syx-text-soft);margin-top:4px;}
+
+  .sec-eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--syx-teal);margin-bottom:.75rem;font-weight:500;}
+  .sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:2rem;line-height:1.2;margin-bottom:.75rem;color:var(--syx-navy);}
+  .sec-title span{color:var(--syx-magenta);}
+  .sec-desc{font-size:.95rem;color:var(--syx-text-soft);line-height:1.75;margin-bottom:2rem;}
+
+  .cards{display:grid;gap:14px;}
+  .cards-2{grid-template-columns:1fr 1fr;}
+  .cards-3{grid-template-columns:repeat(3,1fr);}
+  .card{
+    background:#fff;border:1px solid var(--syx-border);
+    border-radius:var(--radius-sm);padding:20px;
+    transition:all .3s;cursor:default;
+    position:relative;overflow:hidden;
+    box-shadow:0 2px 8px rgba(26,43,74,0.05);
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--syx-magenta);transform:scaleX(0);transform-origin:left;
+    transition:transform .3s;
+  }
+  .card:hover::before{transform:scaleX(1);}
+  .card:hover{border-color:rgba(212,23,122,0.2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,43,74,0.1);}
+  .card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+  .card-icon.mag{background:rgba(212,23,122,0.1);}
+  .card-icon.teal{background:rgba(0,155,136,0.1);}
+  .card-icon.gold{background:rgba(224,149,16,0.1);}
+  .card-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;margin-bottom:6px;color:var(--syx-navy);}
+  .card-body{font-size:.85rem;color:var(--syx-text-soft);line-height:1.65;}
+
+  .timeline{position:relative;padding-left:32px;}
+  .timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--syx-border);border-radius:2px;}
+  .tl-item{position:relative;margin-bottom:28px;opacity:0;transform:translateX(-16px);transition:opacity .4s, transform .4s;}
+  .tl-item.in{opacity:1;transform:translateX(0);}
+  .tl-dot{position:absolute;left:-28px;top:6px;width:14px;height:14px;border-radius:50%;border:2px solid var(--syx-magenta);background:var(--syx-bg);transition:background .2s;}
+  .tl-item:hover .tl-dot{background:var(--syx-magenta);}
+  .tl-label{font-size:11px;color:var(--syx-magenta);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+  .tl-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;margin-bottom:4px;color:var(--syx-navy);}
+  .tl-body{font-size:.85rem;color:var(--syx-text-soft);line-height:1.65;}
+
+  .poles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:2rem;}
+  .pole{border-radius:var(--radius-sm);padding:22px;border:1px solid var(--syx-border);background:#fff;transition:all .3s;cursor:default;box-shadow:0 2px 8px rgba(26,43,74,0.05);}
+  .pole:hover{transform:translateY(-4px);}
+  .pole.p1:hover{border-color:rgba(212,23,122,0.35);background:rgba(212,23,122,0.04);}
+  .pole.p2:hover{border-color:rgba(0,155,136,0.35);background:rgba(0,155,136,0.04);}
+  .pole.p3:hover{border-color:rgba(224,149,16,0.35);background:rgba(224,149,16,0.04);}
+  .pole-badge{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;}
+  .p1 .pole-badge{background:rgba(212,23,122,0.1);color:var(--syx-magenta);}
+  .p2 .pole-badge{background:rgba(0,155,136,0.1);color:var(--syx-teal);}
+  .p3 .pole-badge{background:rgba(224,149,16,0.12);color:var(--syx-gold);}
+  .pole-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:6px;color:var(--syx-navy);}
+  .pole-desc{font-size:.82rem;color:var(--syx-text-soft);line-height:1.65;}
+
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem;}
+  .pill{font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--syx-border);color:var(--syx-text-soft);transition:all .2s;cursor:default;background:#fff;}
+  .pill:hover{border-color:var(--syx-magenta);color:var(--syx-magenta);background:rgba(212,23,122,0.05);}
+  .pill.teal:hover{border-color:var(--syx-teal);color:var(--syx-teal);background:rgba(0,155,136,0.05);}
+
+  .quote-block{border-left:3px solid var(--syx-magenta);padding:16px 20px;background:rgba(212,23,122,0.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:1.5rem 0;font-style:italic;font-size:.95rem;color:var(--syx-text-soft);line-height:1.75;}
+
+  .sec-footer{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--syx-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .footer-name{font-family:'Syne',sans-serif;font-size:.85rem;color:var(--syx-muted);}
+  .footer-date{font-size:.8rem;color:var(--syx-muted);}
+
+  .duo-bar{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1rem;}
+  .duo-side{background:#fff;border:1px solid var(--syx-border);border-radius:var(--radius-sm);padding:20px;transition:all .3s;box-shadow:0 2px 8px rgba(26,43,74,0.05);}
+  .duo-side:hover{transform:translateY(-3px);}
+  .duo-side.junior:hover{border-color:rgba(0,155,136,0.35);}
+  .duo-side.senior:hover{border-color:rgba(212,23,122,0.35);}
+  .duo-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .junior .duo-label{color:var(--syx-teal);}
+  .senior .duo-label{color:var(--syx-magenta);}
+  .duo-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;margin-bottom:10px;color:var(--syx-navy);}
+  .duo-list{list-style:none;font-size:.82rem;color:var(--syx-text-soft);line-height:1.8;}
+  .duo-list li::before{content:'→ ';color:var(--syx-muted);}
+
+  .career-path{display:flex;align-items:stretch;gap:0;margin-top:1.5rem;overflow:hidden;border-radius:var(--radius-sm);}
+  .cp-step{flex:1;padding:18px 14px;text-align:center;position:relative;border:1px solid var(--syx-border);margin-right:-1px;transition:all .25s;cursor:default;}
+  .cp-step:hover{z-index:2;transform:scaleY(1.04);}
+  .cp-step:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm);}
+  .cp-step:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-right:0;}
+  .cp-year{font-size:11px;color:var(--syx-muted);margin-bottom:6px;}
+  .cp-role{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;line-height:1.3;color:var(--syx-navy);}
+  .cp-step.a1{background:rgba(0,155,136,0.06);}
+  .cp-step.a1:hover{background:rgba(0,155,136,0.12);}
+  .cp-step.a2{background:rgba(212,23,122,0.06);}
+  .cp-step.a2:hover{background:rgba(212,23,122,0.12);}
+  .cp-step.a3{background:rgba(224,149,16,0.06);}
+  .cp-step.a3:hover{background:rgba(224,149,16,0.12);}
+  .cp-step.a4{background:rgba(224,149,16,0.06);}
+  .cp-step.a4:hover{background:rgba(224,149,16,0.12);}
+
+  @media(max-width:600px){
+    .cards-2,.cards-3,.poles,.hero-stats,.duo-bar{grid-template-columns:1fr;}
+    .career-path{flex-direction:column;}
+    .cp-step{margin-right:0;margin-bottom:-1px;}
+    .cp-step:first-child{border-radius:var(--radius-sm) var(--radius-sm) 0 0;}
+    .cp-step:last-child{border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-bottom:0;}
+    nav{padding:0 1rem;}
+    .nav-author{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="dot"></div>
+    <span>SYNTHÈSE SYXPERIANE</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="show('hero')">Accueil</button>
+    <button class="nav-tab" onclick="show('presentation')">Présentation</button>
+    <button class="nav-tab" onclick="show('syxperiane')">Activités</button>
+    <button class="nav-tab" onclick="show('poste')">Le poste</button>
+    <button class="nav-tab" onclick="show('moi')">Mon profil</button>
+    <button class="nav-tab" onclick="show('fit')">Pourquoi vous</button>
+  </div>
+  <div class="nav-author">Antonin Annon — Avril 2025</div>
+</nav>
+
+<!-- HERO -->
+<section id="s-hero" class="visible shown">
+  <div class="section-inner" style="text-align:center;display:flex;flex-direction:column;align-items:center;">
+    <div class="hero-tag"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--syx-magenta);margin-right:4px;"></span>Synthèse d'entretiens · Candidature consultant</div>
+    <h1 class="hero-title">Faire de chaque<br>transformation digitale,<br><span>une transformation humaine.</span></h1>
+    <p class="hero-sub">Voici ma lecture de Syxperiane, du poste de consultant fonctionnel XRP Ultimate, et de ce que je crois pouvoir y apporter.</p>
+    <button class="hero-cta" onclick="show('presentation')">Découvrir <span class="arr">→</span></button>
+    
+  </div>
+</section>
+
+<!-- PRESENTATION -->
+<section id="s-presentation">
+  <div class="section-inner">
+    <div class="sec-eyebrow">Présentation</div>
+    <h2 class="sec-title">Syxperiane, <span>une histoire d'expertise</span></h2>
+    <p class="sec-desc">Fondée autour d'une conviction forte — la maîtrise d'une solution ERP peut être un avantage compétitif décisif — Syxperiane s'est construite sur une expertise technique et une culture humaine.</p>
+
+    <div class="sec-eyebrow">Origines & ADN</div>
+    <div class="cards cards-2" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <div class="card-icon mag">🚀</div>
+        <div class="card-title">Une création portée par des spécialistes</div>
+        <div class="card-body">Syxperiane a été fondée en 2007 par des consultants déjà expérimentés sur la solution XRP Ultimate. Ils ont fait le choix de se concentrer exclusivement sur cet outil — un positionnement clair qui structure encore l’entreprise aujourd’hui.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon teal">🎯</div>
+        <div class="card-title">Un positionnement spécialisé</div>
+        <div class="card-body">Dans un marché dominé par des ESN généralistes, Syxperiane mise sur la spécialisation. Ce choix leur permet d’intervenir avec un niveau d’expertise élevé sur XRP Ultimate et de développer des relations durables avec leurs clients.</div>
+      </div>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Chiffres clés</div>
+    <div class="cards" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem;">
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--syx-magenta);margin-bottom:6px;">30 M€</div>
+        <div class="card-body">Chiffre d'affaires annuel</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--syx-teal);margin-bottom:6px;">234</div>
+        <div class="card-body">Collaborateurs en France</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--syx-gold);margin-bottom:6px;">8</div>
+        <div class="card-body">Agences partout en France</div>
+      </div>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Implantation & locaux</div>
+    <div class="implantation-layout" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;align-items:stretch;">
+      <!-- Carte gauche -->
+      <div style="border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--syx-border);box-shadow:0 2px 8px rgba(26,43,74,0.05);min-height:320px;">
+        <div id="map-implantation" style="height:100%;min-height:320px;width:100%;"></div>
+      </div>
+      <!-- Cartes droite -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card" style="flex:1;">
+          <div class="card-icon gold">📍</div>
+          <div class="card-title">Paris — siège social</div>
+          <div class="card-body">Le siège de Syxperiane est basé à Paris. C'est dans ces locaux que j'ai réalisé mes entretiens — un environnement de travail moderne et soigné, qui reflète bien l'image de l'entreprise : sérieuse, professionnelle, mais accessible. On y sent une vraie vie d'équipe.</div>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="card-icon teal">🗺️</div>
+          <div class="card-title">Présence nationale</div>
+          <div class="card-body">Si le siège est à Paris, les consultants interviennent partout en France, directement chez les clients. Les missions impliquent des déplacements réguliers, ce qui est une composante forte du métier et du mode de vie que l'on choisit en rejoignant Syxperiane.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function() {
+      function initMap() {
+        if (!document.getElementById('map-implantation') || window._mapInitialized) return;
+        window._mapInitialized = true;
+        var map = L.map('map-implantation', { zoomControl: true, scrollWheelZoom: false }).setView([46.8, 2.2], 5);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '©OpenStreetMap'
+        }).addTo(map);
+
+        var villes = [
+          { nom: "Paris — Siège social", coords: [48.8566, 2.3522], siege: true },
+          { nom: "Lille", coords: [50.6292, 3.0573] },
+          { nom: "Lyon", coords: [45.7640, 4.8357] },
+          { nom: "Bordeaux", coords: [44.8378, -0.5792] },
+          { nom: "Châlons-en-Champagne", coords: [48.9567, 4.3631] },
+          { nom: "Clermont-Ferrand", coords: [45.7772, 3.0870] },
+          { nom: "Nantes", coords: [47.2184, -1.5536] },
+          { nom: "Strasbourg", coords: [48.5734, 7.7521] }
+        ];
+
+        villes.forEach(function(ville) {
+          var style = ville.siege
+            ? { radius: 10, fillColor: "#D4177A", color: "#fff", weight: 3, opacity: 1, fillOpacity: 1 }
+            : { radius: 7, fillColor: "#D4177A", color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.85 };
+          L.circleMarker(ville.coords, style)
+            .addTo(map)
+            .bindPopup('<b>' + ville.nom + '</b>');
+        });
+
+        // Forcer le recalcul de la taille après affichage
+        setTimeout(function(){ map.invalidateSize(); }, 300);
+      }
+
+      // Observer pour initialiser la carte quand la section devient visible
+      var observer = new MutationObserver(function() {
+        var section = document.getElementById('s-presentation');
+        if (section && section.classList.contains('visible')) {
+          initMap();
+        }
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+        var section = document.getElementById('s-presentation');
+        if (section) observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+      });
+    })();
+    </script>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Marché & clients cibles</div>
+    <div class="cards cards-2">
+      <div class="card">
+        <div class="card-icon mag">🏛️</div>
+        <div class="card-title">Secteur public</div>
+        <div class="card-body">Syxperiane intervient auprès d’acteurs publics tels que les ministères, les établissements publics et les organismes d’État. Ces projets s’inscrivent dans des contextes à forts enjeux institutionnels et réglementaires, avec des cycles de décision souvent longs, mais des missions particulièrement structurantes. Le BRGM, Bureau de Recherches Géologiques et Minières, constitue un exemple représentatif de ce type d’intervention.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon teal">🏭</div>
+        <div class="card-title">Secteur privé</div>
+        <div class="card-body">L’entreprise accompagne également de grandes entreprises françaises, généralement réalisant un chiffre d’affaires supérieur à 100 M€, notamment dans la pharmacie, la banque et l’industrie. Ces environnements exigent un haut niveau de rigueur et une excellente maîtrise des outils, deux éléments essentiels pour répondre à des besoins métiers complexes et à des attentes élevées en matière de performance.</div>
+      </div>
+    </div>
+
+    <div class="quote-block">"Ce que j'ai apprécié lors de la visite des locaux parisiens, c’est surtout l’ambiance : des équipes dynamiques, des locaux récents et un cadre de travail agréable, en plein cœur de Paris."</div>
+
+    <div class="sec-footer">
+      <div class="footer-name">Antonin Annon · Synthèse Syxperiane</div>
+      <div class="footer-date">Avril 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- SYXPERIANE / ACTIVITÉS -->
+<section id="s-syxperiane">
+  <div class="section-inner">
+    <div class="sec-eyebrow">Activités</div>
+    <h2 class="sec-title">Trois pôles, <span>un cycle de vie complet</span></h2>
+    <p class="sec-desc">L'accompagnement de Syxperiane couvre toutes les étapes de la vie d'un ERP, du déploiement initial au suivi quotidien. À travers trois pôles d’expertise complémentaires, l’entreprise s'adapte aux besoins spécifiques de chaque client pour garantir la performance durable de leur outil.</p>
+
+    <div class="sec-eyebrow" style="margin-top:0.5rem;">Les trois pôles</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:600;margin-bottom:1rem;">Une logique de cycle de vie</h3>
+    <div class="poles">
+      <div class="pole p1">
+        <span class="pole-badge">Projet</span>
+        <div class="pole-name">Pôle Projet</div>
+        <div class="pole-desc">Il prend en charge les nouveaux clients, les changements d’ERP et les montées de version importantes. Ce sont des missions structurantes, généralement de plus longue durée.</div>
+      </div>
+      <div class="pole p2">
+        <span class="pole-badge">Run</span>
+        <div class="pole-name">Pôle Run</div>
+        <div class="pole-desc">Il s’occupe des évolutions plus légères et des montées de version courtes. L’objectif est d’accompagner le client sur des ajustements ponctuels, sans remettre en cause l’existant.</div>
+      </div>
+      <div class="pole p3">
+        <span class="pole-badge">TMA</span>
+        <div class="pole-name">TMA</div>
+        <div class="pole-desc">La TMA intervient après le projet pour assurer le support, corriger les anomalies et suivre le bon fonctionnement au quotidien. C’est le pôle qui garantit la continuité de service.</div>
+      </div>
+    </div>
+
+    <div class="quote-block">" La devise de Syxperiane dit tout : la transformation digitale n'est réussie que si elle est d'abord une transformation humaine. C'est une philosophie que je partage."</div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Modèle économique</div>
+    <div class="cards cards-2">
+      <div class="card">
+        <div class="card-icon gold">⚖️</div>
+        <div class="card-title">Une offre au forfait</div>
+        <div class="card-body">La majorité des projets sont menés au forfait. Ce modèle permet au client d’avoir une bonne visibilité sur le coût et le périmètre du projet, tout en engageant fortement Syxperiane sur le respect du volume de jours prévu.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon mag">⚠️</div>
+        <div class="card-title">Exigence de pilotage</div>
+        <div class="card-body">Ce modèle impose un pilotage rigoureux du projet, car chaque dépassement de charge a un impact direct sur la rentabilité. La maîtrise des délais, du périmètre et des ressources est donc essentielle tout au long de la mission.</div>
+      </div>
+    </div>
+
+    <div class="sec-footer">
+      <div class="footer-name">Antonin Annon · Synthèse Syxperiane</div>
+      <div class="footer-date">Avril 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- POSTE -->
+<section id="s-poste">
+  <div class="section-inner">
+    <div class="sec-eyebrow">Le poste</div>
+    <h2 class="sec-title">Consultant fonctionnel <span>XRP Ultimate</span></h2>
+    <p class="sec-desc">Une immersion totale dans un projet, un encadrement par un senior, et une montée en compétences structurée sur 2 ans. Voici ce que j'ai compris du rôle.</p>
+
+    <div class="sec-eyebrow">Fonctionnement en binôme</div>
+    <div class="duo-bar">
+      <div class="duo-side junior">
+        <div class="duo-label">Junior · moi</div>
+        <div class="duo-title">Immersion totale</div>
+        <div class="card-body">Dédié à la réussite opérationnelle, le consultant junior suit le projet de bout en bout. Il transforme les besoins en réalité technique, assurant un paramétrage sur-mesure et une présence quotidienne pour une mise en œuvre sans faille.</div>
+      </div>
+      <div class="duo-side senior">
+        <div class="duo-label">Senior · expérimenté</div>
+        <div class="duo-title">Multi-projets & expertise</div>
+        <div class="card-body">Fort d'une expérience multi-projets, le consultant senior intervient sur les points clés pour valider les orientations et animer les phases critiques. Son rôle : conseiller, sécuriser les décisions et piloter la qualité avec une hauteur de vue stratégique.</div>
+          
+      </div>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Parcours de carrière</div>
+    <div style="margin-top:1rem;overflow-x:auto;">
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;display:block;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.25)"/>
+        </marker>
+        <marker id="arr-teal" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#00B09B"/>
+        </marker>
+        <marker id="arr-gold" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#F5A623"/>
+        </marker>
+      </defs>
+
+      <!-- Ligne junior → expérimenté -->
+      <line x1="155" y1="130" x2="295" y2="130" stroke="#00B09B" stroke-width="2" marker-end="url(#arr)"/>
+      <!-- Ligne expérimenté → bifurcation -->
+      <line x1="465" y1="130" x2="530" y2="130" stroke="#E91E8C" stroke-width="2"/>
+      <!-- Branche haute : chef de projet -->
+      <line x1="530" y1="130" x2="600" y2="72" stroke="#F5A623" stroke-width="2" marker-end="url(#arr-gold)" stroke-dasharray="5,3"/>
+      <!-- Branche basse : expert XRP -->
+      <line x1="530" y1="130" x2="600" y2="188" stroke="#00B09B" stroke-width="2" marker-end="url(#arr-teal)" stroke-dasharray="5,3"/>
+
+      <!-- JUNIOR -->
+      <rect x="10" y="100" width="145" height="60" rx="10" fill="rgba(0,176,155,0.12)" stroke="#00B09B" stroke-width="1.5"/>
+      <text x="82" y="125" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#00B09B" letter-spacing="1">0 – 2 ANS</text>
+      <text x="82" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#00B09B">Consultant junior</text>
+
+      <!-- EXPÉRIMENTÉ -->
+      <rect x="295" y="100" width="170" height="60" rx="10" fill="rgba(233,30,140,0.12)" stroke="#E91E8C" stroke-width="1.5"/>
+      <text x="380" y="125" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#E91E8C" letter-spacing="1">2 – 4 ANS</text>
+      <text x="380" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#E91E8C">Consultant expérimenté</text>
+
+      <!-- Cercle de bifurcation -->
+      <circle cx="530" cy="130" r="7" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+
+      <!-- CHEF DE PROJET -->
+      <rect x="600" y="42" width="148" height="60" rx="10" fill="rgba(245,166,35,0.12)" stroke="#F5A623" stroke-width="1.5"/>
+      <text x="674" y="67" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#F5A623" letter-spacing="1">4 – 5 ANS</text>
+      <text x="674" y="88" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="#F5A623">Chef de projet</text>
+
+      <!-- EXPERT XRP -->
+      <rect x="600" y="158" width="148" height="60" rx="10" fill="rgba(0,176,155,0.10)" stroke="#00B09B" stroke-width="1.5"/>
+      <text x="674" y="183" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#00B09B" letter-spacing="1">7 ANS +</text>
+      <text x="674" y="204" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="#00B09B">Expert XRP</text>
+
+      <!-- Label bifurcation -->
+      <text x="537" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(255,255,255,0.3)" letter-spacing=".5">CHOIX</text>
+    </svg>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Formation interne · Le Campus</div>
+    <div class="cards cards-3">
+      <div class="card">
+        <div class="card-icon teal">📅</div>
+        <div class="card-title">Rythme</div>
+        <div class="card-body">La formation s'inscrit dans la durée avec un rendez-vous hebdomadaire chaque vendredi après-midi sur un cycle de 2 ans.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon mag">⚙️</div>
+        <div class="card-title">Savoir Technique</div>
+        <div class="card-body">L'objectif est d'acquérir toutes les compétences nécessaires pour configurer des systèmes complexes et piloter des intégrations de bout en bout.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon gold">🤝</div>
+        <div class="card-title">Savoir-être</div>
+        <div class="card-body">Parce que le métier repose sur la relation client, le Campus développe les soft skills indispensables : communication efficace, posture professionnelle et culture générale.</div>
+      </div>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Ce que Syxperiane attend d'un consultant</div>
+    <div class="pills">
+      <span class="pill">Curiosité</span>
+      <span class="pill">Rigueur</span>
+      <span class="pill">Esprit collectif</span>
+      <span class="pill teal">Mobilité (déplacements France)</span>
+      <span class="pill">Adaptabilité</span>
+      <span class="pill teal">Vie d'équipe en mission</span>
+      <span class="pill">Appétit pour apprendre</span>
+      <span class="pill">Sens du travail bien fait</span>
+    </div>
+
+    <div class="sec-footer">
+      <div class="footer-name">Antonin Annon · Synthèse Syxperiane</div>
+      <div class="footer-date">Avril 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- MOI -->
+<section id="s-moi">
+  <div class="section-inner">
+    <div class="sec-eyebrow">Mon profil</div>
+    <h2 class="sec-title">Antonin Annon, <span>ingénieur de terrain</span></h2>
+    <p class="sec-desc">Ingénieur généraliste ICAM, spécialisé en supply chain et industrie 4.0. Mon parcours mêle déploiement SI, optimisation de processus et projets terrain à l'international.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">2024 – Présent · Alternance</div>
+        <div class="tl-title">Capgemini — Déploiement WMS Manhattan Active</div>
+        <div class="tl-body">Participation au déploiement sur 100 drives Auchan. Gestion de bascules IT, développement d'outils d'automatisation (VBA, Python), gains de productivité mesurables. Expérience directe sur la conduite de projet ERP/WMS en conditions réelles.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">2024 ·  BNP Oslo · Stage finance</div>
+        <div class="tl-title">Expérience internationale en finance</div>
+        <div class="tl-body">Stage en milieu anglophone, développement d'une posture professionnelle internationale et d'une vraie autonomie à l'étranger.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">2023 · Safran · Stage industrie</div>
+        <div class="tl-title">Amélioration énergétique & Lean</div>
+        <div class="tl-body">Application des méthodes 5S et Lean en contexte industriel exigeant. Rigueur opérationnelle et sens du détail.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">2022 · Forvia · Stage industrie</div>
+        <div class="tl-title">Pilotage d'un projet vision industrielle</div>
+        <div class="tl-body">Conduite d'un projet technique de bout en bout, en environnement de production automobile. Gestion d'équipe, livrables, délais.</div>
+      </div>
+    </div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">Compétences techniques</div>
+    <div class="pills">
+      <span class="pill">Manhattan Active WMS</span>
+      <span class="pill">Python</span>
+      <span class="pill">VBA</span>
+      <span class="pill">JavaScript</span>
+      <span class="pill teal">Agile / Scrum</span>
+      <span class="pill teal">Lean · 5S</span>
+      <span class="pill">SQL</span>
+      <span class="pill">Anglais B2</span>
+    </div>
+
+    <div class="sec-footer">
+      <div class="footer-name">Antonin Annon · Synthèse Syxperiane</div>
+      <div class="footer-date">Avril 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- FIT -->
+<section id="s-fit">
+  <div class="section-inner">
+    <div class="sec-eyebrow">Pourquoi vous</div>
+    <h2 class="sec-title">Pourquoi <span>Syxperiane</span> me parle</h2>
+    <p class="sec-desc">Ce n'est pas un hasard si Syxperiane a retenu mon attention au forum ICAM. Le parallèle avec mon vécu chez Capgemini était immédiat — et les différences, justement ce que je cherche.</p>
+
+    <div class="cards cards-2" style="margin-bottom:2rem;">
+      <div class="card">
+        <div class="card-icon teal">🔗</div>
+        <div class="card-title">Une continuité logique</div>
+        <div class="card-body">L’expérience acquise chez Capgemini sur Manhattan Active constitue un socle solide. La transition vers l'univers ERP de Syxperiane est naturelle : les enjeux de complexité humaine, de gestion du changement et de respect des délais au forfait sont des réalités déjà maîtrisées et prêtes à être investies.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon mag">🎯</div>
+        <div class="card-title">La spécialisation, un choix</div>
+        <div class="card-body">Chez Syxperiane, on ne survole pas. On devient expert d'une solution, d'un secteur, d'un outil. C'est un choix de carrière que j'assume : aller en profondeur plutôt qu'en surface.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon gold">🤝</div>
+        <div class="card-title">Le collectif comme moteur</div>
+        <div class="card-body">Les missions impliquent des déplacements, de la vie d'équipe, une vraie proximité humaine. C'est un mode de fonctionnement que j'apprécie — et dans lequel je suis à l'aise.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon teal">📈</div>
+        <div class="card-title">Une progression lisible</div>
+        <div class="card-body">Le parcours junior → expérimenté → chef de projet ou expert est clair, balisé, mérité. C'est la trajectoire que je cherche : savoir où je vais, et pourquoi.</div>
+      </div>
+    </div>
+
+    <div class="quote-block">"Ce qui m'a frappé lors de nos échanges, c'est la cohérence de Syxperiane : une spécialisation assumée, un modèle humain fort, et une exigence qui donne du sens au travail. C'est exactement l'environnement dans lequel je veux progresser."</div>
+
+    <div class="sec-eyebrow" style="margin-top:2rem;">En résumé</div>
+    <div class="cards cards-3">
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--syx-teal);margin-bottom:6px;">Curieux</div>
+        <div class="card-body">J'apprends vite et j'aime comprendre en profondeur.</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--syx-magenta);margin-bottom:6px;">Rigoureux</div>
+        <div class="card-body">Mes projets ont des livrables, des délais et des résultats mesurables.</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--syx-gold);margin-bottom:6px;">Collectif</div>
+        <div class="card-body">À l'aise en équipe, y compris en déplacement.</div>
+      </div>
+    </div>
+
+    <div class="sec-footer">
+      <div class="footer-name">Antonin Annon · Synthèse Syxperiane</div>
+      <div class="footer-date">Avril 2025</div>
+    </div>
+  </div>
+</section>
+
+<script>
+const sections={hero:'s-hero',presentation:'s-presentation',syxperiane:'s-syxperiane',poste:'s-poste',moi:'s-moi',fit:'s-fit'};
+const tabs=document.querySelectorAll('.nav-tab');
+
+function show(id){
+  document.querySelectorAll('section').forEach(s=>{
+    s.classList.remove('visible','shown');
+    setTimeout(()=>{if(!s.classList.contains('visible'))s.style.display='none';},350);
+  });
+  tabs.forEach((t,i)=>{
+    const ids=['hero','presentation','syxperiane','poste','moi','fit'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  const el=document.getElementById('s-'+id);
+  el.style.display='flex';
+  el.classList.add('visible');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.classList.add('shown');
+    if(id==='moi'){
+      const items=el.querySelectorAll('.tl-item');
+      items.forEach((item,i)=>setTimeout(()=>item.classList.add('in'),i*120+200));
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+}
+
+document.querySelectorAll('section').forEach(s=>{
+  if(!s.classList.contains('visible'))s.style.display='none';
+});
+</script>
+</body>
+</html>
